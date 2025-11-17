@@ -639,6 +639,12 @@ fn parse_port_from_lsof(name: &str) -> Option<u16> {
 
 // resolve_command removed with single-pass sweep
 
+fn sanitize_identifier(s: &str) -> String {
+    s.chars()
+        .filter(|c| c.is_alphanumeric() || *c == '-' || *c == '_' || *c == '.')
+        .collect()
+}
+
 fn parse_menu_action(id: &MenuId) -> Option<MenuAction> {
     let raw = id.as_ref();
     if raw == MENU_ID_KILL_ALL {
@@ -651,11 +657,11 @@ fn parse_menu_action(id: &MenuId) -> Option<MenuAction> {
         Some(MenuAction::Snooze30m)
     } else if let Some(rest) = raw.strip_prefix(MENU_ID_DOCKER_STOP_PREFIX) {
         Some(MenuAction::DockerStop {
-            container: rest.to_string(),
+            container: sanitize_identifier(rest),
         })
     } else if let Some(rest) = raw.strip_prefix(MENU_ID_BREW_STOP_PREFIX) {
         Some(MenuAction::BrewStop {
-            service: rest.to_string(),
+            service: sanitize_identifier(rest),
         })
     } else if let Some(remainder) = raw.strip_prefix(MENU_ID_PROCESS_PREFIX) {
         let mut parts = remainder.split('_');
