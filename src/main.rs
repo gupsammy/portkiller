@@ -38,8 +38,6 @@ struct Config {
     inactive_color: (u8, u8, u8),
     #[serde(default = "default_active_color")]
     active_color: (u8, u8, u8),
-    #[serde(default = "default_confirm_list")]
-    confirm_before_kill: Vec<String>,
     #[serde(default = "default_notifications_enabled")]
     notifications_enabled: bool,
 }
@@ -50,17 +48,6 @@ fn default_inactive_color() -> (u8, u8, u8) {
 
 fn default_active_color() -> (u8, u8, u8) {
     (255, 69, 58) // Red - SF Symbols system red color
-}
-
-fn default_confirm_list() -> Vec<String> {
-    vec![
-        "postgres".into(),
-        "postgresql".into(),
-        "mysqld".into(),
-        "redis".into(),
-        "redis-server".into(),
-        "mongod".into(),
-    ]
 }
 
 fn default_notifications_enabled() -> bool {
@@ -85,7 +72,6 @@ impl Default for Config {
             ],
             inactive_color: default_inactive_color(),
             active_color: default_active_color(),
-            confirm_before_kill: default_confirm_list(),
             notifications_enabled: default_notifications_enabled(),
         }
     }
@@ -127,7 +113,6 @@ fn main() -> Result<()> {
         config: config.clone(),
         project_cache: HashMap::new(),
         docker_port_map: HashMap::new(),
-        confirm_pending: HashMap::new(),
         snooze_until: None,
     };
 
@@ -190,31 +175,6 @@ fn main() -> Result<()> {
                 }
                 MenuAction::KillPid { pid, .. } => {
                     if let Some(target) = describe_pid(pid, &state.processes) {
-                        // confirmation gate if matches patterns
-                        if requires_confirmation(&target.label, &state.config.confirm_before_kill) {
-                            let now = Instant::now();
-                            if let Some(ts) = state.confirm_pending.get(&pid) {
-                                if now.duration_since(*ts) <= Duration::from_secs(5) {
-                                    state.confirm_pending.remove(&pid);
-                                } else {
-                                    state.confirm_pending.insert(pid, now);
-                                    state.last_feedback = Some(KillFeedback::warning(format!(
-                                        "Confirm kill: click again to terminate {} (PID {}).",
-                                        target.label, target.pid
-                                    )));
-                                    update_tray_display(&tray_icon, &state);
-                                    return;
-                                }
-                            } else {
-                                state.confirm_pending.insert(pid, now);
-                                state.last_feedback = Some(KillFeedback::warning(format!(
-                                    "Confirm kill: click again to terminate {} (PID {}).",
-                                    target.label, target.pid
-                                )));
-                                update_tray_display(&tray_icon, &state);
-                                return;
-                            }
-                        }
                         if let Some(sender) = kill_sender.as_ref() {
                             if let Err(err) = sender.send(KillCommand::KillPid(target)) {
                                 let feedback = KillFeedback::error(format!(
@@ -807,32 +767,34 @@ fn build_menu_with_context(state: &AppState) -> Result<Menu> {
             menu.append(&header)?;
             for process in items {
                 total += 1;
-                let label = format!(
-                    "Kill {} (PID {}, port {})",
-                    process.command, process.pid, process.port
-                );
-                let item = MenuItem::with_id(
-                    MenuId::new(process_menu_id(process.pid, process.port)),
-                    label,
-                    true,
-                    None,
-                );
-                menu.append(&item)?;
 
-                // Docker-aware alternative
+                // Prioritize: Docker > Brew > Kill
+                // Only show ONE option per port
                 if let Some(dc) = state.docker_port_map.get(&process.port) {
+                    // Docker-aware: show "Stop container" option
                     let dlabel = format!("Stop container {} (port {})", dc.name, process.port);
                     let did = format!("{}{}", MENU_ID_DOCKER_STOP_PREFIX, dc.name);
                     let ditem = MenuItem::with_id(&did, &dlabel, true, None);
                     menu.append(&ditem)?;
-                }
-
-                // Brew-aware heuristic
-                if let Some(service) = map_brew_service_from_cmd(&process.command) {
+                } else if let Some(service) = map_brew_service_from_cmd(&process.command) {
+                    // Brew-aware: show "Stop via brew" option
                     let blabel = format!("Stop via brew {}", service);
                     let bid = format!("{}{}", MENU_ID_BREW_STOP_PREFIX, service);
                     let bitem = MenuItem::with_id(&bid, &blabel, true, None);
                     menu.append(&bitem)?;
+                } else {
+                    // Default: show regular "Kill" option
+                    let label = format!(
+                        "Kill {} (PID {}, port {})",
+                        process.command, process.pid, process.port
+                    );
+                    let item = MenuItem::with_id(
+                        MenuId::new(process_menu_id(process.pid, process.port)),
+                        label,
+                        true,
+                        None,
+                    );
+                    menu.append(&item)?;
                 }
             }
             menu.append(&PredefinedMenuItem::separator())?;
@@ -881,11 +843,6 @@ fn update_tray_display(tray_icon: &TrayIcon, state: &AppState) {
     if let Err(err) = tray_icon.set_tooltip(Some(tooltip.as_str())) {
         error!("Failed to update tooltip: {}", err);
     }
-}
-
-fn requires_confirmation(label: &str, patterns: &[String]) -> bool {
-    let l = label.to_lowercase();
-    patterns.iter().any(|p| l.contains(&p.to_lowercase()))
 }
 
 fn refresh_projects_for(state: &mut AppState) {
@@ -1237,7 +1194,6 @@ struct AppState {
     config: Config,
     project_cache: HashMap<i32, ProjectInfo>,
     docker_port_map: HashMap<u16, DockerContainerInfo>,
-    confirm_pending: HashMap<i32, Instant>,
     snooze_until: Option<Instant>,
 }
 
@@ -1249,7 +1205,6 @@ impl Default for AppState {
             config: Config::default(),
             project_cache: HashMap::new(),
             docker_port_map: HashMap::new(),
-            confirm_pending: HashMap::new(),
             snooze_until: None,
         }
     }
