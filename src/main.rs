@@ -159,7 +159,9 @@ fn main() -> Result<()> {
                 refresh_projects_for(&mut state);
                 // Clean up stale cache entries for terminated processes
                 let active_pids: HashSet<i32> = state.processes.iter().map(|p| p.pid).collect();
-                state.project_cache.retain(|pid, _| active_pids.contains(pid));
+                state
+                    .project_cache
+                    .retain(|pid, _| active_pids.contains(pid));
                 // Notifications on change
                 maybe_notify_changes(&state, &prev);
                 sync_menu_with_context(&tray_icon, &state);
@@ -298,7 +300,11 @@ fn spawn_monitor_thread(
                         // Poll immediately to catch rapid changes (0ms delay)
                         continue;
                     } else {
-                        log::trace!("No change (scan took {:?}). Sleeping {}s.", scan_duration, POLL_INTERVAL.as_secs());
+                        log::trace!(
+                            "No change (scan took {:?}). Sleeping {}s.",
+                            scan_duration,
+                            POLL_INTERVAL.as_secs()
+                        );
                         // Back to normal interval when stable
                         thread::sleep(POLL_INTERVAL);
                     }
@@ -935,7 +941,10 @@ fn query_docker_port_map() -> Result<HashMap<u16, DockerContainerInfo>> {
         }
     };
     if !out.status.success() {
-        warn!("Docker ps command failed: {}", String::from_utf8_lossy(&out.stderr));
+        warn!(
+            "Docker ps command failed: {}",
+            String::from_utf8_lossy(&out.stderr)
+        );
         return Ok(map);
     }
     let stdout = String::from_utf8_lossy(&out.stdout);
@@ -959,7 +968,10 @@ fn query_docker_port_map() -> Result<HashMap<u16, DockerContainerInfo>> {
                 if let Some((_, host)) = left.rsplit_once(':') {
                     // Check for port ranges (not yet supported)
                     if host.contains('-') {
-                        warn!("Docker container '{}' exposes port range '{}' - port ranges not yet supported", name, host);
+                        warn!(
+                            "Docker container '{}' exposes port range '{}' - port ranges not yet supported",
+                            name, host
+                        );
                         continue;
                     }
 
@@ -975,14 +987,27 @@ fn query_docker_port_map() -> Result<HashMap<u16, DockerContainerInfo>> {
                             );
                         }
                         Err(_) => {
-                            log::debug!("Failed to parse port '{}' from Docker mapping '{}' for container '{}'", host, seg, name);
+                            log::debug!(
+                                "Failed to parse port '{}' from Docker mapping '{}' for container '{}'",
+                                host,
+                                seg,
+                                name
+                            );
                         }
                     }
                 } else {
-                    log::debug!("Failed to extract host port from Docker mapping '{}' for container '{}'", seg, name);
+                    log::debug!(
+                        "Failed to extract host port from Docker mapping '{}' for container '{}'",
+                        seg,
+                        name
+                    );
                 }
             } else {
-                log::debug!("Failed to parse Docker port mapping '{}' for container '{}'", seg, name);
+                log::debug!(
+                    "Failed to parse Docker port mapping '{}' for container '{}'",
+                    seg,
+                    name
+                );
             }
         }
     }
