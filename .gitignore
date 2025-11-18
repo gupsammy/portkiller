@@ -8,6 +8,9 @@
 .AppleDouble
 .LSOverride
 
+# Database files
+dump.rdb
+
 # IDEs
 .vscode/
 .idea/

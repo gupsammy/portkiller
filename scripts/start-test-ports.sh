@@ -12,7 +12,14 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 PIDS_FILE="/tmp/macport-test-services.pids"
-REPOS_DIR="$HOME/Documents/GitHub/Hackathons"
+# Detect the correct GitHub/Github path
+if [ -d "$HOME/Documents/GitHub/Hackathons" ]; then
+    REPOS_DIR="$HOME/Documents/GitHub/Hackathons"
+elif [ -d "$HOME/Documents/Github/Hackathons" ]; then
+    REPOS_DIR="$HOME/Documents/Github/Hackathons"
+else
+    REPOS_DIR="$HOME/Documents/GitHub/Hackathons"  # Default fallback
+fi
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║  Macport Test Environment Setup       ║${NC}"
@@ -128,13 +135,27 @@ start_all() {
 
     # Start Node.js servers (if projects exist)
     if [ -d "$REPOS_DIR/ditherbaby" ]; then
-        start_service 3000 "node" "Next.js (ditherbaby)" \
-            "cd $REPOS_DIR/ditherbaby && npm run dev" || true
+        if [ ! -d "$REPOS_DIR/ditherbaby/node_modules" ]; then
+            echo -e "${YELLOW}⚠️  ditherbaby exists but dependencies not installed, skipping port 3000...${NC}"
+            echo -e "${YELLOW}   Run: cd $REPOS_DIR/ditherbaby && npm install${NC}"
+        else
+            start_service 3000 "node" "Next.js (ditherbaby)" \
+                "cd $REPOS_DIR/ditherbaby && npm run dev" || true
+        fi
+    else
+        echo -e "${YELLOW}⚠️  $REPOS_DIR/ditherbaby not found, skipping port 3000...${NC}"
     fi
 
     if [ -d "$REPOS_DIR/image-editor" ]; then
-        start_service 3001 "node" "React/Vite (image-editor)" \
-            "cd $REPOS_DIR/image-editor && npm run dev" || true
+        if [ ! -d "$REPOS_DIR/image-editor/node_modules" ]; then
+            echo -e "${YELLOW}⚠️  image-editor exists but dependencies not installed, skipping port 3001...${NC}"
+            echo -e "${YELLOW}   Run: cd $REPOS_DIR/image-editor && npm install${NC}"
+        else
+            start_service 3001 "node" "React/Vite (image-editor)" \
+                "cd $REPOS_DIR/image-editor && npm run dev" || true
+        fi
+    else
+        echo -e "${YELLOW}⚠️  $REPOS_DIR/image-editor not found, skipping port 3001...${NC}"
     fi
 
     # Start Python HTTP servers
@@ -152,8 +173,15 @@ start_all() {
 
     # Start Vite server if bitbybitweb exists
     if [ -d "$REPOS_DIR/bitbybitweb" ]; then
-        start_service 8000 "node" "Vite (bitbybitweb)" \
-            "cd $REPOS_DIR/bitbybitweb && npm run dev" || true
+        if [ ! -d "$REPOS_DIR/bitbybitweb/node_modules" ]; then
+            echo -e "${YELLOW}⚠️  bitbybitweb exists but dependencies not installed, skipping port 8000...${NC}"
+            echo -e "${YELLOW}   Run: cd $REPOS_DIR/bitbybitweb && npm install${NC}"
+        else
+            start_service 8000 "node" "Vite (bitbybitweb)" \
+                "cd $REPOS_DIR/bitbybitweb && npm run dev" || true
+        fi
+    else
+        echo -e "${YELLOW}⚠️  $REPOS_DIR/bitbybitweb not found, skipping port 8000...${NC}"
     fi
 
     # Start Redis
@@ -179,14 +207,61 @@ start_all() {
         echo ""
         echo -e "${BLUE}Starting Docker containers...${NC}"
 
+        # Check if Docker daemon is running
+        if ! docker info > /dev/null 2>&1; then
+            echo -e "${YELLOW}⚠️  Docker daemon not running, attempting to start...${NC}"
+
+            # Try to start Docker Desktop
+            if [ -d "/Applications/Docker.app" ]; then
+                open -a Docker
+                echo -e "${BLUE}Waiting for Docker daemon to start (up to 30 seconds)...${NC}"
+
+                # Wait up to 30 seconds for Docker to start
+                for i in {1..30}; do
+                    if docker info > /dev/null 2>&1; then
+                        echo -e "${GREEN}✅ Docker daemon started successfully${NC}"
+                        sleep 2  # Give it a moment to fully initialize
+                        break
+                    fi
+                    sleep 1
+                done
+
+                # Check if it actually started
+                if ! docker info > /dev/null 2>&1; then
+                    echo -e "${RED}❌ Docker daemon failed to start, skipping containers...${NC}"
+                    echo -e "${YELLOW}   Try starting Docker Desktop manually${NC}"
+                    return
+                fi
+            else
+                echo -e "${RED}❌ Docker Desktop not found at /Applications/Docker.app${NC}"
+                echo -e "${YELLOW}   Skipping Docker containers...${NC}"
+                return
+            fi
+        fi
+
         # PostgreSQL
         if ! check_port 5432; then
             echo -e "${BLUE}Starting PostgreSQL container...${NC}"
-            docker run -d --name macport-test-postgres \
-                -p 5432:5432 \
-                -e POSTGRES_PASSWORD=test \
-                postgres:alpine > /dev/null 2>&1
-            echo -e "${GREEN}✅ PostgreSQL running on port 5432${NC}"
+
+            # Check if container exists (running or stopped)
+            if docker ps -a --format '{{.Names}}' | grep -q '^macport-test-postgres$'; then
+                # Container exists, start it
+                if docker start macport-test-postgres > /dev/null 2>&1; then
+                    echo -e "${GREEN}✅ PostgreSQL running on port 5432 (existing container restarted)${NC}"
+                else
+                    echo -e "${RED}❌ Failed to start existing PostgreSQL container${NC}"
+                fi
+            else
+                # Create new container
+                if docker run -d --name macport-test-postgres \
+                    -p 5432:5432 \
+                    -e POSTGRES_PASSWORD=test \
+                    postgres:alpine > /dev/null 2>&1; then
+                    echo -e "${GREEN}✅ PostgreSQL running on port 5432${NC}"
+                else
+                    echo -e "${RED}❌ Failed to create PostgreSQL container${NC}"
+                fi
+            fi
         else
             echo -e "${YELLOW}⚠️  Port 5432 already in use, skipping PostgreSQL...${NC}"
         fi
@@ -194,10 +269,25 @@ start_all() {
         # MongoDB
         if ! check_port 27017; then
             echo -e "${BLUE}Starting MongoDB container...${NC}"
-            docker run -d --name macport-test-mongo \
-                -p 27017:27017 \
-                mongo:latest > /dev/null 2>&1
-            echo -e "${GREEN}✅ MongoDB running on port 27017${NC}"
+
+            # Check if container exists (running or stopped)
+            if docker ps -a --format '{{.Names}}' | grep -q '^macport-test-mongo$'; then
+                # Container exists, start it
+                if docker start macport-test-mongo > /dev/null 2>&1; then
+                    echo -e "${GREEN}✅ MongoDB running on port 27017 (existing container restarted)${NC}"
+                else
+                    echo -e "${RED}❌ Failed to start existing MongoDB container${NC}"
+                fi
+            else
+                # Create new container
+                if docker run -d --name macport-test-mongo \
+                    -p 27017:27017 \
+                    mongo:latest > /dev/null 2>&1; then
+                    echo -e "${GREEN}✅ MongoDB running on port 27017${NC}"
+                else
+                    echo -e "${RED}❌ Failed to create MongoDB container${NC}"
+                fi
+            fi
         else
             echo -e "${YELLOW}⚠️  Port 27017 already in use, skipping MongoDB...${NC}"
         fi
