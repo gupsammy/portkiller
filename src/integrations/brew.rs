@@ -57,33 +57,6 @@ pub fn get_brew_managed_service(
     None
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn brew_mapping_happy_and_mismatch() {
-        let mut map = HashMap::new();
-        map.insert("redis".to_string(), "started".to_string());
-        map.insert("postgresql".to_string(), "stopped".to_string());
-
-        // Matches default port and started
-        assert_eq!(
-            get_brew_managed_service("redis-server", 6379, &map),
-            Some("redis".into())
-        );
-
-        // Wrong port shouldn't match
-        assert_eq!(get_brew_managed_service("redis-server", 6380, &map), None);
-
-        // Not started shouldn't match
-        assert_eq!(get_brew_managed_service("postgres", 5432, &map), None);
-
-        // Unknown service returns None
-        assert_eq!(get_brew_managed_service("myapp", 3000, &map), None);
-    }
-}
-
 pub fn run_brew_stop(service: &str) -> KillFeedback {
     let res = Command::new("brew")
         .args(["services", "stop", service])
@@ -125,5 +98,32 @@ fn get_default_port_for_service(service: &str) -> Option<u16> {
         "mysql" => Some(3306),
         "mongodb-community" => Some(27017),
         _ => None,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn brew_mapping_happy_and_mismatch() {
+        let mut map = HashMap::new();
+        map.insert("redis".to_string(), "started".to_string());
+        map.insert("postgresql".to_string(), "stopped".to_string());
+
+        // Matches default port and started
+        assert_eq!(
+            get_brew_managed_service("redis-server", 6379, &map),
+            Some("redis".into())
+        );
+
+        // Wrong port shouldn't match
+        assert_eq!(get_brew_managed_service("redis-server", 6380, &map), None);
+
+        // Not started shouldn't match
+        assert_eq!(get_brew_managed_service("postgres", 5432, &map), None);
+
+        // Unknown service returns None
+        assert_eq!(get_brew_managed_service("myapp", 3000, &map), None);
     }
 }
