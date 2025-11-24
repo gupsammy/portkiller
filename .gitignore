@@ -8,6 +8,11 @@
 .AppleDouble
 .LSOverride
 
+# Build artifacts
+*.dmg
+*.app
+assets/AppIcon.iconset/
+
 # Database files
 dump.rdb
 
