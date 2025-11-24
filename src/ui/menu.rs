@@ -21,7 +21,7 @@ const MENU_ID_EMPTY: &str = "empty";
 fn friendly_container_name(raw_name: &str) -> String {
     // Strip common prefixes
     let name = raw_name
-        .trim_start_matches("macport-")
+        .trim_start_matches("portkiller-")
         .trim_start_matches("test-")
         .trim_start_matches("dev-");
 

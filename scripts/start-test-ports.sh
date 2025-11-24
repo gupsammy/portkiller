@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Macport Test Environment Setup Script
-# Starts various services on different ports for testing macport functionality
+# Portkiller Test Environment Setup Script
+# Starts various services on different ports for testing portkiller functionality
 
 set -e
 
@@ -11,7 +11,7 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-PIDS_FILE="/tmp/macport-test-services.pids"
+PIDS_FILE="/tmp/portkiller-test-services.pids"
 # Detect the correct GitHub/Github path
 if [ -d "$HOME/Documents/GitHub/Hackathons" ]; then
     REPOS_DIR="$HOME/Documents/GitHub/Hackathons"
@@ -22,7 +22,7 @@ else
 fi
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  Macport Test Environment Setup       ║${NC}"
+echo -e "${BLUE}║  Portkiller Test Environment Setup       ║${NC}"
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
 echo ""
 
@@ -51,8 +51,8 @@ cleanup() {
     fi
 
     # Stop Docker containers
-    docker ps -q --filter "name=macport-test-" | xargs -r docker stop > /dev/null 2>&1 || true
-    docker ps -aq --filter "name=macport-test-" | xargs -r docker rm > /dev/null 2>&1 || true
+    docker ps -q --filter "name=portkiller-test-" | xargs -r docker stop > /dev/null 2>&1 || true
+    docker ps -aq --filter "name=portkiller-test-" | xargs -r docker rm > /dev/null 2>&1 || true
 }
 
 # Function to start service and track PID
@@ -106,7 +106,7 @@ show_status() {
     if [ ! -f "$PIDS_FILE" ]; then
         echo -e "${YELLOW}No services tracked by this script${NC}"
         echo ""
-        echo "Currently listening ports monitored by macport:"
+        echo "Currently listening ports monitored by portkiller:"
         lsof -i -P | grep -E ':(3000|3001|3002|3306|4000|5000|5173|5432|6379|8000|8080|9000|27017).*LISTEN' | awk '{print $1 "\t" $2 "\t" $9}' | column -t || echo "None found"
         return
     fi
@@ -267,16 +267,16 @@ start_all() {
             echo -e "${BLUE}Starting PostgreSQL container...${NC}"
 
             # Check if container exists (running or stopped)
-            if docker ps -a --format '{{.Names}}' | grep -q '^macport-test-postgres$'; then
+            if docker ps -a --format '{{.Names}}' | grep -q '^portkiller-test-postgres$'; then
                 # Container exists, start it
-                if docker start macport-test-postgres > /dev/null 2>&1; then
+                if docker start portkiller-test-postgres > /dev/null 2>&1; then
                     echo -e "${GREEN}✅ PostgreSQL running on port 5432 (existing container restarted)${NC}"
                 else
                     echo -e "${RED}❌ Failed to start existing PostgreSQL container${NC}"
                 fi
             else
                 # Create new container
-                if docker run -d --name macport-test-postgres \
+                if docker run -d --name portkiller-test-postgres \
                     -p 5432:5432 \
                     -e POSTGRES_PASSWORD=test \
                     postgres:alpine > /dev/null 2>&1; then
@@ -294,16 +294,16 @@ start_all() {
             echo -e "${BLUE}Starting MongoDB container...${NC}"
 
             # Check if container exists (running or stopped)
-            if docker ps -a --format '{{.Names}}' | grep -q '^macport-test-mongo$'; then
+            if docker ps -a --format '{{.Names}}' | grep -q '^portkiller-test-mongo$'; then
                 # Container exists, start it
-                if docker start macport-test-mongo > /dev/null 2>&1; then
+                if docker start portkiller-test-mongo > /dev/null 2>&1; then
                     echo -e "${GREEN}✅ MongoDB running on port 27017 (existing container restarted)${NC}"
                 else
                     echo -e "${RED}❌ Failed to start existing MongoDB container${NC}"
                 fi
             else
                 # Create new container
-                if docker run -d --name macport-test-mongo \
+                if docker run -d --name portkiller-test-mongo \
                     -p 27017:27017 \
                     mongo:latest > /dev/null 2>&1; then
                     echo -e "${GREEN}✅ MongoDB running on port 27017${NC}"

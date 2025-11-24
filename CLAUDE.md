@@ -1,4 +1,4 @@
-# macport
+# portkiller
 
 macOS menu bar app for monitoring and killing processes on development ports. Built with Rust and native system tray integration.
 
@@ -36,7 +36,7 @@ The `scripts/` directory contains utilities for development and testing:
 
 ## Configuration
 
-User config stored at `~/.macport.json` (auto-created on first run):
+User config stored at `~/.portkiller.json` (auto-created on first run):
 
 ```json
 {
@@ -74,7 +74,7 @@ src/
 ├── main.rs              # Entry point
 ├── lib.rs               # Module exports
 ├── app.rs               # Application orchestration, event loop
-├── config.rs            # Configuration management (~/.macport.json)
+├── config.rs            # Configuration management (~/.portkiller.json)
 ├── model.rs             # Core data structures (AppState, ProcessInfo)
 ├── notify.rs            # macOS notification integration
 ├── process/
@@ -113,7 +113,7 @@ Four concurrent threads communicate via channels and event loop proxy:
 - **Kill all**: Terminate all monitored processes
 - **Stop [docker container]**: `docker stop <container>`
 - **Stop [brew service]**: `brew services stop <service>`
-- **Edit Configuration**: Open `~/.macport.json`
+- **Edit Configuration**: Open `~/.portkiller.json`
 - **Quit**: Exit app
 
 ## Default Port Ranges
@@ -147,7 +147,7 @@ MAX_TOOLTIP_ENTRIES = 5      // Max displayed in tooltip
 ## Common Patterns
 
 ### Adding a monitored port range
-Edit `~/.macport.json` via menu or directly. Changes require restart. Default ranges defined in `config.rs`.
+Edit `~/.portkiller.json` via menu or directly. Changes require restart. Default ranges defined in `config.rs`.
 
 ### Extending integrations
 Add new service detection to `src/integrations/`. Follow pattern: detection function, port mapping, menu integration.

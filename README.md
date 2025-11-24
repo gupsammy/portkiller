@@ -1,8 +1,8 @@
-# Macport
+# Portkiller
 
 A lightweight macOS menu bar application that monitors common development server ports and allows you to quickly kill processes listening on those ports.
 
-![Macport Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
+![Portkiller Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Features
@@ -34,23 +34,23 @@ A lightweight macOS menu bar application that monitors common development server
 ### One-Line Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Macport/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh | bash
 ```
 
 The installer will:
 - Download the latest release from GitHub
-- Install to `/usr/local/bin/macport`
+- Install to `/usr/local/bin/portkiller`
 - Set up permissions and handle macOS security
 - Verify the installation
 
-After installation, simply run `macport` to launch the app in your menu bar.
+After installation, simply run `portkiller` to launch the app in your menu bar.
 
 ### Alternative: Install Specific Version
 
 To install and inspect the script first:
 ```bash
 # Download the installer
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Macport/master/install.sh > install.sh
+curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh > install.sh
 
 # Review it
 less install.sh
@@ -63,25 +63,25 @@ bash install.sh
 
 ```bash
 # Clone the repository
-git clone https://github.com/gupsammy/Macport.git
-cd macport
+git clone https://github.com/gupsammy/Portkiller.git
+cd portkiller
 
 # Build in release mode
 cargo build --release
 
 # Run the application
-./target/release/macport
+./target/release/portkiller
 ```
 
 ## Configuration
 
-Macport creates a configuration file at `~/.macport.json` on first run. You can edit this file to customize which ports to monitor.
+Portkiller creates a configuration file at `~/.portkiller.json` on first run. You can edit this file to customize which ports to monitor.
 
 To edit the configuration:
-1. Click the Macport icon in your menu bar
+1. Click the Portkiller icon in your menu bar
 2. Select "Edit Configuration..."
 3. Modify the port ranges as needed
-4. Save and restart Macport
+4. Save and restart Portkiller
 
 Example configuration:
 ```json
@@ -139,10 +139,10 @@ Popular color options:
 
 ```bash
 # Remove the binary
-sudo rm /usr/local/bin/macport
+sudo rm /usr/local/bin/portkiller
 
 # Remove the config file (optional)
-rm ~/.macport.json
+rm ~/.portkiller.json
 ```
 
 ## Platform Support
@@ -184,7 +184,7 @@ cargo clippy
 
 ### Architecture
 
-Macport uses a multi-threaded event-driven architecture:
+Portkiller uses a multi-threaded event-driven architecture:
 
 - **Main Event Loop** - Manages UI and orchestrates state changes
 - **Monitor Thread** - Polls ports every 2 seconds using `lsof`
@@ -197,7 +197,7 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 Contributions are welcome! Here are some ways you can help:
 
-- Report bugs and request features via [Issues](https://github.com/gupsammy/Macport/issues)
+- Report bugs and request features via [Issues](https://github.com/gupsammy/Portkiller/issues)
 - Submit pull requests for bug fixes or new features
 - Improve documentation
 - Share your experience and spread the word

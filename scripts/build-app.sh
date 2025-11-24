@@ -1,16 +1,16 @@
 #!/bin/bash
 set -e
 
-# Build macOS .app bundle for macport
+# Build macOS .app bundle for portkiller
 # This creates a proper app bundle required for launch-at-login functionality
 
-APP_NAME="macport"
-BUNDLE_ID="com.github.${USER}.macport"
+APP_NAME="portkiller"
+BUNDLE_ID="com.github.${USER}.portkiller"
 VERSION="0.1.0"
 BUILD_DIR="target/release"
 APP_DIR="${BUILD_DIR}/${APP_NAME}.app"
 
-echo "🔨 Building macport.app bundle..."
+echo "🔨 Building portkiller.app bundle..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Step 1: Build release binary

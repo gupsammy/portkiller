@@ -1,6 +1,6 @@
-# macport Assets
+# portkiller Assets
 
-This directory contains app assets for macport.
+This directory contains app assets for portkiller.
 
 ## App Icon
 
@@ -43,7 +43,7 @@ To create a custom icon:
 
 ### Icon Design Guidelines
 
-For a menu bar app like macport:
+For a menu bar app like portkiller:
 - **Simple and recognizable** at small sizes (16x16px in the menu bar)
 - **Clear silhouette** that works in both light and dark modes
 - **Port/network theme**: Consider using symbols like:

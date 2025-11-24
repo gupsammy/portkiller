@@ -155,7 +155,7 @@ impl Default for SystemConfig {
 
 pub fn get_config_path() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".macport.json")
+    PathBuf::from(home).join(".portkiller.json")
 }
 
 pub fn load_or_create_config() -> Result<Config> {

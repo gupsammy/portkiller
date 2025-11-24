@@ -1,18 +1,18 @@
 #!/bin/bash
 set -e
 
-# Create distributable DMG for macport
+# Create distributable DMG for portkiller
 # This script packages the .app bundle into a DMG for easy distribution
 
-APP_NAME="macport"
+APP_NAME="portkiller"
 VERSION="0.1.0"
 BUILD_DIR="target/release"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
 DMG_NAME="${APP_NAME}-${VERSION}.dmg"
 DMG_DIR="${BUILD_DIR}/dmg"
-VOLUME_NAME="macport ${VERSION}"
+VOLUME_NAME="portkiller ${VERSION}"
 
-echo "📦 Creating DMG for macport..."
+echo "📦 Creating DMG for portkiller..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Step 1: Verify .app bundle exists

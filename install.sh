@@ -1,6 +1,6 @@
 #!/bin/bash
-# macport installer - One-line installation script
-# Usage: curl -fsSL https://raw.githubusercontent.com/gupsammy/Macport/master/install.sh | bash
+# portkiller installer - One-line installation script
+# Usage: curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh | bash
 
 set -e
 
@@ -11,9 +11,9 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO="gupsammy/Macport"
+REPO="gupsammy/Portkiller"
 INSTALL_DIR="/usr/local/bin"
-BINARY_NAME="macport"
+BINARY_NAME="portkiller"
 TEMP_DIR=$(mktemp -d)
 
 # Cleanup function
@@ -50,7 +50,7 @@ for cmd in curl tar sudo; do
 done
 
 echo ""
-print_info "Installing macport..."
+print_info "Installing portkiller..."
 echo ""
 
 # Get the latest release URL
@@ -68,8 +68,8 @@ VERSION=$(echo "$LATEST_RELEASE" | grep '"tag_name"' | cut -d '"' -f 4)
 print_success "Found version $VERSION"
 
 # Download the release
-print_info "Downloading macport..."
-if ! curl -fsSL "$DOWNLOAD_URL" -o "$TEMP_DIR/macport.tar.gz"; then
+print_info "Downloading portkiller..."
+if ! curl -fsSL "$DOWNLOAD_URL" -o "$TEMP_DIR/portkiller.tar.gz"; then
     print_error "Failed to download release"
     exit 1
 fi
@@ -77,7 +77,7 @@ print_success "Download complete"
 
 # Extract the tarball
 print_info "Extracting files..."
-if ! tar -xzf "$TEMP_DIR/macport.tar.gz" -C "$TEMP_DIR"; then
+if ! tar -xzf "$TEMP_DIR/portkiller.tar.gz" -C "$TEMP_DIR"; then
     print_error "Failed to extract archive"
     exit 1
 fi
@@ -117,12 +117,12 @@ print_success "Installation complete!"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-print_success "macport $VERSION has been installed successfully!"
+print_success "portkiller $VERSION has been installed successfully!"
 echo ""
-echo "  To launch: macport"
+echo "  To launch: portkiller"
 echo ""
-echo "  Config file: ~/.macport.json"
-echo "  Edit config from menu: Click macport icon → Edit Configuration"
+echo "  Config file: ~/.portkiller.json"
+echo "  Edit config from menu: Click portkiller icon → Edit Configuration"
 echo ""
 echo "  To uninstall: sudo rm $INSTALL_DIR/$BINARY_NAME"
 echo ""

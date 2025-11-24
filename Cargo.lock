@@ -1127,23 +1127,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34080505efa8e45a4b816c349525ebe327ceaa8559756f0356cba97ef3bf7432"
 
 [[package]]
-name = "macport"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "auto-launch",
- "crossbeam-channel",
- "env_logger",
- "log",
- "nix",
- "serde",
- "serde_json",
- "smappservice-rs",
- "tray-icon",
- "winit",
-]
-
-[[package]]
 name = "memchr"
 version = "2.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1689,6 +1672,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d8a2f0d8d040d7848a709caf78912debcc3f33ee4b3cac47d73d1e1069e83507"
 dependencies = [
  "portable-atomic",
+]
+
+[[package]]
+name = "portkiller"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "auto-launch",
+ "crossbeam-channel",
+ "env_logger",
+ "log",
+ "nix",
+ "serde",
+ "serde_json",
+ "smappservice-rs",
+ "tray-icon",
+ "winit",
 ]
 
 [[package]]
