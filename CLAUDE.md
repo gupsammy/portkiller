@@ -8,6 +8,21 @@ macOS menu bar app for monitoring and killing processes on development ports. Bu
 **Package Manager:** Cargo
 **Key Dependencies:** tray-icon, winit, nix, crossbeam-channel, anyhow
 
+## Build Optimizations
+
+The release build uses aggressive size optimizations configured in `Cargo.toml`:
+- **opt-level = "z"**: Optimize for binary size (instead of speed)
+- **lto = true**: Link-Time Optimization for cross-crate inlining
+- **codegen-units = 1**: Single compilation unit for maximum optimization
+- **strip = true**: Remove debug symbols from binary
+- **panic = "abort"**: Simpler panic handling without unwinding
+
+Icon optimization (in `scripts/create-icon.sh`):
+- Maximum resolution: 512x512 (no 1024x1024 variant)
+- PNG compression: pngquant (quality 80-90) + optipng (level 7)
+
+**Final sizes:** Binary 1.1 MB, Icon 512 KB, DMG 1.1 MB (61% reduction from unoptimized)
+
 ## Development Commands
 
 ```bash

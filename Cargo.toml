@@ -15,3 +15,10 @@ serde_json = "1.0"
 smappservice-rs = "0.1"
 tray-icon = "0.21"
 winit = "0.30"
+
+[profile.release]
+opt-level = "z"        # Optimize for size
+lto = true             # Enable Link Time Optimization
+codegen-units = 1      # Better optimization, slower compile
+strip = true           # Strip symbols from binary
+panic = "abort"        # Reduce panic handling overhead
