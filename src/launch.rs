@@ -61,7 +61,7 @@ mod smapp {
                     // Open System Settings to Login Items
                     AppService::open_system_settings_login_items();
                     return Err(anyhow::anyhow!(
-                        "Please approve portkiller in System Settings > Login Items"
+                        "Please approve PortKiller in System Settings > Login Items"
                     ));
                 }
 
@@ -109,7 +109,7 @@ mod launchagent {
             .ok_or_else(|| anyhow::anyhow!("Invalid executable path"))?;
 
         AutoLaunchBuilder::new()
-            .set_app_name("portkiller")
+            .set_app_name("PortKiller")
             .set_app_path(app_path)
             .set_use_launch_agent(true) // Use LaunchAgent instead of AppleScript
             .build()

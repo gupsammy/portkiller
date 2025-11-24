@@ -1,16 +1,17 @@
 #!/bin/bash
 set -e
 
-# Build macOS .app bundle for portkiller
+# Build macOS .app bundle for PortKiller
 # This creates a proper app bundle required for launch-at-login functionality
 
-APP_NAME="portkiller"
+APP_NAME="PortKiller"
+BINARY_NAME="portkiller"  # Cargo builds binary with package name (lowercase)
 BUNDLE_ID="com.github.${USER}.portkiller"
 VERSION="0.1.0"
 BUILD_DIR="target/release"
 APP_DIR="${BUILD_DIR}/${APP_NAME}.app"
 
-echo "🔨 Building portkiller.app bundle..."
+echo "🔨 Building ${APP_NAME}.app bundle..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Step 1: Build release binary
@@ -25,7 +26,7 @@ mkdir -p "${APP_DIR}/Contents/Resources"
 
 # Step 3: Copy binary
 echo "📋 Copying binary..."
-cp "${BUILD_DIR}/${APP_NAME}" "${APP_DIR}/Contents/MacOS/"
+cp "${BUILD_DIR}/${BINARY_NAME}" "${APP_DIR}/Contents/MacOS/"
 
 # Step 3.5: Copy icon if available
 if [ -f "assets/AppIcon.icns" ]; then
@@ -43,7 +44,7 @@ cat > "${APP_DIR}/Contents/Info.plist" << EOF
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>${APP_NAME}</string>
+    <string>${BINARY_NAME}</string>
     <key>CFBundleIdentifier</key>
     <string>${BUNDLE_ID}</string>
     <key>CFBundleInfoDictionaryVersion</key>

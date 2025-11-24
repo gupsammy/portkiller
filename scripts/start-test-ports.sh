@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Portkiller Test Environment Setup Script
+# PortKiller Test Environment Setup Script
 # Starts various services on different ports for testing portkiller functionality
 
 set -e
@@ -22,7 +22,7 @@ else
 fi
 
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
-echo -e "${BLUE}║  Portkiller Test Environment Setup       ║${NC}"
+echo -e "${BLUE}║  PortKiller Test Environment Setup       ║${NC}"
 echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
 echo ""
 

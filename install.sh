@@ -1,6 +1,6 @@
 #!/bin/bash
 # portkiller installer - One-line installation script
-# Usage: curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/gupsammy/PortKiller/master/install.sh | bash
 
 set -e
 
@@ -11,7 +11,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-REPO="gupsammy/Portkiller"
+REPO="gupsammy/PortKiller"
 INSTALL_DIR="/usr/local/bin"
 BINARY_NAME="portkiller"
 TEMP_DIR=$(mktemp -d)

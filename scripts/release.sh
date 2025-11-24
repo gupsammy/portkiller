@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-# Complete release build for portkiller
+# Complete release build for PortKiller
 # This script orchestrates the entire build process: icon → app → dmg
 
 VERSION="0.1.0"
+APP_NAME="PortKiller"
 
-echo "🚀 portkiller Release Build Pipeline"
+echo "🚀 ${APP_NAME} Release Build Pipeline"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "Version: ${VERSION}"
 echo ""
@@ -35,11 +36,11 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "🎉 Release build complete!"
 echo ""
 echo "Artifacts created:"
-echo "  • App bundle: target/release/portkiller.app"
-echo "  • DMG installer: target/release/portkiller-${VERSION}.dmg"
+echo "  • App bundle: target/release/${APP_NAME}.app"
+echo "  • DMG installer: target/release/${APP_NAME}-${VERSION}.dmg"
 echo ""
 echo "Next steps:"
-echo "  1. Test the DMG: open target/release/portkiller-${VERSION}.dmg"
+echo "  1. Test the DMG: open target/release/${APP_NAME}-${VERSION}.dmg"
 echo "  2. Create a GitHub release: gh release create v${VERSION}"
 echo "  3. Upload the DMG to the release"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

@@ -21,6 +21,6 @@ pub fn maybe_notify_changes(state: &AppState, prev: &[ProcessInfo]) {
 
 fn notify(message: &str) {
     let msg = message.replace('"', "'");
-    let script = format!("display notification \"{}\" with title \"Portkiller\"", msg);
+    let script = format!("display notification \"{}\" with title \"PortKiller\"", msg);
     let _ = Command::new("osascript").args(["-e", &script]).spawn();
 }

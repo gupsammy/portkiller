@@ -1,8 +1,8 @@
-# Portkiller
+# PortKiller
 
 A lightweight macOS menu bar application that monitors common development server ports and allows you to quickly kill processes listening on those ports.
 
-![Portkiller Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
+![PortKiller Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Features
@@ -34,7 +34,7 @@ A lightweight macOS menu bar application that monitors common development server
 ### One-Line Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/gupsammy/PortKiller/master/install.sh | bash
 ```
 
 The installer will:
@@ -50,7 +50,7 @@ After installation, simply run `portkiller` to launch the app in your menu bar.
 To install and inspect the script first:
 ```bash
 # Download the installer
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Portkiller/master/install.sh > install.sh
+curl -fsSL https://raw.githubusercontent.com/gupsammy/PortKiller/master/install.sh > install.sh
 
 # Review it
 less install.sh
@@ -63,7 +63,7 @@ bash install.sh
 
 ```bash
 # Clone the repository
-git clone https://github.com/gupsammy/Portkiller.git
+git clone https://github.com/gupsammy/PortKiller.git
 cd portkiller
 
 # Build in release mode
@@ -75,13 +75,13 @@ cargo build --release
 
 ## Configuration
 
-Portkiller creates a configuration file at `~/.portkiller.json` on first run. You can edit this file to customize which ports to monitor.
+PortKiller creates a configuration file at `~/.portkiller.json` on first run. You can edit this file to customize which ports to monitor.
 
 To edit the configuration:
-1. Click the Portkiller icon in your menu bar
+1. Click the PortKiller icon in your menu bar
 2. Select "Edit Configuration..."
 3. Modify the port ranges as needed
-4. Save and restart Portkiller
+4. Save and restart PortKiller
 
 Example configuration:
 ```json
@@ -184,7 +184,7 @@ cargo clippy
 
 ### Architecture
 
-Portkiller uses a multi-threaded event-driven architecture:
+PortKiller uses a multi-threaded event-driven architecture:
 
 - **Main Event Loop** - Manages UI and orchestrates state changes
 - **Monitor Thread** - Polls ports every 2 seconds using `lsof`
@@ -197,7 +197,7 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 Contributions are welcome! Here are some ways you can help:
 
-- Report bugs and request features via [Issues](https://github.com/gupsammy/Portkiller/issues)
+- Report bugs and request features via [Issues](https://github.com/gupsammy/PortKiller/issues)
 - Submit pull requests for bug fixes or new features
 - Improve documentation
 - Share your experience and spread the word

@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
 
-# Create macOS .icns icon for portkiller
+# Create macOS .icns icon for PortKiller
 # This script generates a simple icon representing a port/network monitor
 
+APP_NAME="PortKiller"
 ICON_NAME="AppIcon"
 ICON_DIR="assets/AppIcon.iconset"
 OUTPUT_ICON="assets/AppIcon.icns"
 
-echo "🎨 Creating portkiller app icon..."
+echo "🎨 Creating ${APP_NAME} app icon..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Create iconset directory

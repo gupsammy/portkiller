@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Portkiller Notification Test Script
+# PortKiller Notification Test Script
 # This script starts and stops servers on various ports to trigger portkiller notifications
 
-echo "🧪 Portkiller Notification Test Script"
+echo "🧪 PortKiller Notification Test Script"
 echo "===================================="
 echo ""
 echo "This script will:"
@@ -94,7 +94,7 @@ echo "  - 3x 'Ports now listening' notifications"
 echo "  - 3x 'Ports freed' notifications"
 echo ""
 echo "If you didn't see notifications, check:"
-echo "  1. Portkiller is running"
+echo "  1. PortKiller is running"
 echo "  2. Notifications are enabled in config"
 echo "  3. Notifications are not snoozed"
 echo "  4. macOS notification permissions are granted"
