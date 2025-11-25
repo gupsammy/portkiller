@@ -1,4 +1,4 @@
-# macport
+# portkiller
 
 macOS menu bar app for monitoring and killing processes on development ports. Built with Rust and native system tray integration.
 
@@ -7,6 +7,21 @@ macOS menu bar app for monitoring and killing processes on development ports. Bu
 **Language:** Rust 2024 edition
 **Package Manager:** Cargo
 **Key Dependencies:** tray-icon, winit, nix, crossbeam-channel, anyhow
+
+## Build Optimizations
+
+The release build uses aggressive size optimizations configured in `Cargo.toml`:
+- **opt-level = "z"**: Optimize for binary size (instead of speed)
+- **lto = true**: Link-Time Optimization for cross-crate inlining
+- **codegen-units = 1**: Single compilation unit for maximum optimization
+- **strip = true**: Remove debug symbols from binary
+- **panic = "abort"**: Simpler panic handling without unwinding
+
+Icon optimization (in `scripts/create-icon.sh`):
+- Maximum resolution: 512x512 (no 1024x1024 variant)
+- PNG compression: pngquant (quality 80-90) + optipng (level 7)
+
+**Final sizes:** Binary 1.1 MB, Icon 512 KB, DMG 1.1 MB (61% reduction from unoptimized)
 
 ## Development Commands
 
@@ -36,7 +51,7 @@ The `scripts/` directory contains utilities for development and testing:
 
 ## Configuration
 
-User config stored at `~/.macport.json` (auto-created on first run):
+User config stored at `~/.portkiller.json` (auto-created on first run):
 
 ```json
 {
@@ -48,10 +63,6 @@ User config stored at `~/.macport.json` (auto-created on first run):
   "integrations": {
     "brew_enabled": true,
     "docker_enabled": true
-  },
-  "ui": {
-    "inactive_color": [255, 255, 255],
-    "active_color": [255, 69, 58]
   },
   "notifications": {
     "enabled": true
@@ -74,7 +85,7 @@ src/
 ├── main.rs              # Entry point
 ├── lib.rs               # Module exports
 ├── app.rs               # Application orchestration, event loop
-├── config.rs            # Configuration management (~/.macport.json)
+├── config.rs            # Configuration management (~/.portkiller.json)
 ├── model.rs             # Core data structures (AppState, ProcessInfo)
 ├── notify.rs            # macOS notification integration
 ├── process/
@@ -104,7 +115,7 @@ Four concurrent threads communicate via channels and event loop proxy:
 **process/ports.rs**: Parse `lsof` output, map ports to PIDs
 **process/kill.rs**: Graceful shutdown (SIGTERM → 2s → SIGKILL → 1s)
 **ui/menu.rs**: Dynamic menu with process/Docker/Brew items
-**ui/icon.rs**: Template-based icon with configurable colors
+**ui/icon.rs**: Template icon that adapts to menu bar appearance
 **integrations/docker.rs**: Map container names to exposed ports
 **integrations/brew.rs**: Detect and verify Homebrew services on ports
 
@@ -113,7 +124,7 @@ Four concurrent threads communicate via channels and event loop proxy:
 - **Kill all**: Terminate all monitored processes
 - **Stop [docker container]**: `docker stop <container>`
 - **Stop [brew service]**: `brew services stop <service>`
-- **Edit Configuration**: Open `~/.macport.json`
+- **Edit Configuration**: Open `~/.portkiller.json`
 - **Quit**: Exit app
 
 ## Default Port Ranges
@@ -147,7 +158,7 @@ MAX_TOOLTIP_ENTRIES = 5      // Max displayed in tooltip
 ## Common Patterns
 
 ### Adding a monitored port range
-Edit `~/.macport.json` via menu or directly. Changes require restart. Default ranges defined in `config.rs`.
+Edit `~/.portkiller.json` via menu or directly. Changes require restart. Default ranges defined in `config.rs`.
 
 ### Extending integrations
 Add new service detection to `src/integrations/`. Follow pattern: detection function, port mapping, menu integration.

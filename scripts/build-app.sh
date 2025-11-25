@@ -1,16 +1,17 @@
 #!/bin/bash
 set -e
 
-# Build macOS .app bundle for macport
+# Build macOS .app bundle for PortKiller
 # This creates a proper app bundle required for launch-at-login functionality
 
-APP_NAME="macport"
-BUNDLE_ID="com.github.${USER}.macport"
+APP_NAME="PortKiller"
+BINARY_NAME="portkiller"  # Cargo builds binary with package name (lowercase)
+BUNDLE_ID="com.samarthgupta.portkiller"
 VERSION="0.1.0"
 BUILD_DIR="target/release"
 APP_DIR="${BUILD_DIR}/${APP_NAME}.app"
 
-echo "🔨 Building macport.app bundle..."
+echo "🔨 Building ${APP_NAME}.app bundle..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Step 1: Build release binary
@@ -25,7 +26,18 @@ mkdir -p "${APP_DIR}/Contents/Resources"
 
 # Step 3: Copy binary
 echo "📋 Copying binary..."
-cp "${BUILD_DIR}/${APP_NAME}" "${APP_DIR}/Contents/MacOS/"
+cp "${BUILD_DIR}/${BINARY_NAME}" "${APP_DIR}/Contents/MacOS/"
+
+# Step 3.5: Copy icons if available
+if [ -f "assets/AppIcon.icns" ]; then
+    echo "🎨 Copying app icon..."
+    cp "assets/AppIcon.icns" "${APP_DIR}/Contents/Resources/"
+fi
+# Also copy PNG version for notifications (terminal-notifier needs PNG)
+if [ -f "assets/app-logo-color.png" ]; then
+    echo "🎨 Copying notification icon (PNG)..."
+    cp "assets/app-logo-color.png" "${APP_DIR}/Contents/Resources/AppIcon.png"
+fi
 
 # Step 4: Create Info.plist
 echo "📝 Creating Info.plist..."
@@ -37,7 +49,7 @@ cat > "${APP_DIR}/Contents/Info.plist" << EOF
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>${APP_NAME}</string>
+    <string>${BINARY_NAME}</string>
     <key>CFBundleIdentifier</key>
     <string>${BUNDLE_ID}</string>
     <key>CFBundleInfoDictionaryVersion</key>
@@ -50,6 +62,8 @@ cat > "${APP_DIR}/Contents/Info.plist" << EOF
     <string>${VERSION}</string>
     <key>CFBundleVersion</key>
     <string>1</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.15</string>
     <key>LSUIElement</key>

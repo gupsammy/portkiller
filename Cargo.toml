@@ -1,10 +1,11 @@
 [package]
-name = "macport"
+name = "portkiller"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 anyhow = "1.0"
+png = "0.17"
 auto-launch = "0.5"
 crossbeam-channel = "0.5"
 env_logger = "0.11"
@@ -15,3 +16,10 @@ serde_json = "1.0"
 smappservice-rs = "0.1"
 tray-icon = "0.21"
 winit = "0.30"
+
+[profile.release]
+opt-level = "z"        # Optimize for size
+lto = true             # Enable Link Time Optimization
+codegen-units = 1      # Better optimization, slower compile
+strip = true           # Strip symbols from binary
+panic = "abort"        # Reduce panic handling overhead

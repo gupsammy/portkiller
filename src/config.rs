@@ -11,8 +11,6 @@ pub struct Config {
     #[serde(default)]
     pub integrations: IntegrationsConfig,
     #[serde(default)]
-    pub ui: UiConfig,
-    #[serde(default)]
     pub notifications: NotificationsConfig,
     #[serde(default)]
     pub system: SystemConfig,
@@ -34,14 +32,6 @@ pub struct IntegrationsConfig {
     pub brew_enabled: bool,
     #[serde(default = "default_docker_enabled")]
     pub docker_enabled: bool,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct UiConfig {
-    #[serde(default = "default_inactive_color")]
-    pub inactive_color: (u8, u8, u8),
-    #[serde(default = "default_active_color")]
-    pub active_color: (u8, u8, u8),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -90,15 +80,6 @@ fn default_docker_enabled() -> bool {
     true
 }
 
-// Defaults for UiConfig
-fn default_inactive_color() -> (u8, u8, u8) {
-    (255, 255, 255)
-}
-
-fn default_active_color() -> (u8, u8, u8) {
-    (255, 69, 58)
-}
-
 // Defaults for NotificationsConfig
 fn default_notifications_enabled() -> bool {
     true
@@ -128,15 +109,6 @@ impl Default for IntegrationsConfig {
     }
 }
 
-impl Default for UiConfig {
-    fn default() -> Self {
-        Self {
-            inactive_color: default_inactive_color(),
-            active_color: default_active_color(),
-        }
-    }
-}
-
 impl Default for NotificationsConfig {
     fn default() -> Self {
         Self {
@@ -155,7 +127,7 @@ impl Default for SystemConfig {
 
 pub fn get_config_path() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".macport.json")
+    PathBuf::from(home).join(".portkiller.json")
 }
 
 pub fn load_or_create_config() -> Result<Config> {

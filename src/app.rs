@@ -19,7 +19,7 @@ use crate::model::*;
 use crate::notify::maybe_notify_changes;
 use crate::process::kill::terminate_pid;
 use crate::process::ports::scan_ports;
-use crate::ui::icon::create_icon;
+use crate::ui::icon::{IconVariant, create_template_icon};
 use crate::ui::menu::{
     build_menu_with_context, build_tooltip, collect_targets_for_all, format_command_label,
     parse_menu_action,
@@ -50,10 +50,12 @@ pub fn run() -> Result<()> {
     let _menu_thread = spawn_menu_listener(proxy.clone());
     let _worker = spawn_worker(worker_rx, proxy.clone());
 
-    let icon = create_icon(config.ui.inactive_color).context("failed to create tray icon image")?;
+    let icon =
+        create_template_icon(IconVariant::Inactive).context("failed to create tray icon image")?;
     let initial_menu = build_menu_with_context(&state).context("failed to build initial menu")?;
     let tray_icon = TrayIconBuilder::new()
         .with_icon(icon)
+        .with_icon_as_template(true)
         .with_menu(Box::new(initial_menu))
         .with_tooltip("No dev port listeners detected.")
         .build()
@@ -88,13 +90,13 @@ pub fn run() -> Result<()> {
                 }
                 // Derive project info in best-effort mode
                 refresh_projects_for(&mut state);
+                // Notifications on change (before cache cleanup so stopped ports still have project info)
+                maybe_notify_changes(&state, &prev);
                 // Clean up stale cache entries for terminated processes
                 let active_pids: HashSet<i32> = state.processes.iter().map(|p| p.pid).collect();
                 state
                     .project_cache
                     .retain(|pid, _| active_pids.contains(pid));
-                // Notifications on change
-                maybe_notify_changes(&state, &prev);
                 sync_menu_with_context(&tray_icon, &state);
                 update_tray_display(&tray_icon, &state);
             }
@@ -560,14 +562,16 @@ fn sync_menu_with_context(tray_icon: &TrayIcon, state: &AppState) {
 }
 
 fn update_tray_display(tray_icon: &TrayIcon, state: &AppState) {
-    let color = if state.processes.is_empty() {
-        state.config.ui.inactive_color
+    // Swap icon based on whether ports are active
+    let variant = if state.processes.is_empty() {
+        IconVariant::Inactive
     } else {
-        state.config.ui.active_color
+        IconVariant::Active
     };
 
-    if let Ok(icon) = create_icon(color) {
+    if let Ok(icon) = create_template_icon(variant) {
         let _ = tray_icon.set_icon(Some(icon));
+        tray_icon.set_icon_as_template(true);
     }
 
     let tooltip = build_tooltip(&state.processes, state.last_feedback.as_ref());
@@ -640,4 +644,4 @@ fn resolve_project_info(pid: i32) -> Option<ProjectInfo> {
 
 // notifications moved to crate::notify
 
-// build_tooltip and create_icon moved under ui::{menu,icon}
+// build_tooltip and create_template_icon moved under ui::{menu,icon}

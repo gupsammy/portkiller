@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Macport Notification Test Script
-# This script starts and stops servers on various ports to trigger macport notifications
+# PortKiller Notification Test Script
+# This script starts and stops servers on various ports to trigger portkiller notifications
 
-echo "🧪 Macport Notification Test Script"
+echo "🧪 PortKiller Notification Test Script"
 echo "===================================="
 echo ""
 echo "This script will:"
@@ -13,7 +13,7 @@ echo "3. Stop the servers"
 echo "4. Wait 5 seconds (watch for 'Ports freed' notification)"
 echo "5. Repeat the cycle 3 times"
 echo ""
-echo "Make sure macport is running and notifications are enabled!"
+echo "Make sure portkiller is running and notifications are enabled!"
 echo ""
 read -p "Press Enter to start the test..."
 
@@ -33,7 +33,7 @@ start_servers() {
     PID3=$!
 
     # Store PIDs in a file for cleanup
-    echo "$PID1 $PID2 $PID3" > /tmp/macport-test-pids.txt
+    echo "$PID1 $PID2 $PID3" > /tmp/portkiller-test-pids.txt
 
     echo "✅ Servers started: PIDs $PID1, $PID2, $PID3"
     echo "   You should see a notification: 'Ports now listening: [4000, 4001, 9000]'"
@@ -44,12 +44,12 @@ stop_servers() {
     echo ""
     echo "⬇️  Stopping servers..."
 
-    if [ -f /tmp/macport-test-pids.txt ]; then
-        PIDS=$(cat /tmp/macport-test-pids.txt)
+    if [ -f /tmp/portkiller-test-pids.txt ]; then
+        PIDS=$(cat /tmp/portkiller-test-pids.txt)
         for pid in $PIDS; do
             kill $pid 2>/dev/null
         done
-        rm /tmp/macport-test-pids.txt
+        rm /tmp/portkiller-test-pids.txt
         echo "✅ Servers stopped"
         echo "   You should see a notification: 'Ports freed: [4000, 4001, 9000]'"
     fi
@@ -94,7 +94,7 @@ echo "  - 3x 'Ports now listening' notifications"
 echo "  - 3x 'Ports freed' notifications"
 echo ""
 echo "If you didn't see notifications, check:"
-echo "  1. Macport is running"
+echo "  1. PortKiller is running"
 echo "  2. Notifications are enabled in config"
 echo "  3. Notifications are not snoozed"
 echo "  4. macOS notification permissions are granted"

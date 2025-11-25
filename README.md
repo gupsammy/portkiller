@@ -1,17 +1,16 @@
-# Macport
+# PortKiller
 
 A lightweight macOS menu bar application that monitors common development server ports and allows you to quickly kill processes listening on those ports.
 
-![Macport Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
+![PortKiller Icon](https://img.shields.io/badge/platform-macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Features
 
 - **Real-time Port Monitoring** - Automatically scans and displays processes listening on development ports
-- **Visual Indicators** - Icon changes color when active ports are detected (configurable colors)
+- **Native Menu Bar Icon** - Adapts to light/dark mode automatically
 - **Quick Kill** - Terminate individual processes or all at once with a single click
 - **Graceful Shutdown** - Attempts SIGTERM first, falls back to SIGKILL if needed
-- **Customizable Colors** - Configure icon colors for active/inactive states
 - **Configurable Ports** - Easily customize which ports to monitor via JSON config file
 - **Native Performance** - Built with Rust for minimal resource usage
 
@@ -31,57 +30,38 @@ A lightweight macOS menu bar application that monitors common development server
 
 ## Installation
 
-### One-Line Install (Recommended)
+### Download DMG (Recommended)
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Macport/master/install.sh | bash
-```
+1. Download the latest `PortKiller.dmg` from the [Releases](https://github.com/gupsammy/PortKiller/releases) page
+2. Open the DMG file
+3. Drag PortKiller to your Applications folder
+4. Launch PortKiller from Applications or Spotlight
 
-The installer will:
-- Download the latest release from GitHub
-- Install to `/usr/local/bin/macport`
-- Set up permissions and handle macOS security
-- Verify the installation
+The app will appear in your macOS menu bar and is ready to use!
 
-After installation, simply run `macport` to launch the app in your menu bar.
-
-### Alternative: Install Specific Version
-
-To install and inspect the script first:
-```bash
-# Download the installer
-curl -fsSL https://raw.githubusercontent.com/gupsammy/Macport/master/install.sh > install.sh
-
-# Review it
-less install.sh
-
-# Run it
-bash install.sh
-```
-
-### From Source
+### Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/gupsammy/Macport.git
-cd macport
+git clone https://github.com/gupsammy/PortKiller.git
+cd portkiller
 
 # Build in release mode
 cargo build --release
 
 # Run the application
-./target/release/macport
+./target/release/portkiller
 ```
 
 ## Configuration
 
-Macport creates a configuration file at `~/.macport.json` on first run. You can edit this file to customize which ports to monitor.
+PortKiller creates a configuration file at `~/.portkiller.json` on first run. You can edit this file to customize which ports to monitor.
 
 To edit the configuration:
-1. Click the Macport icon in your menu bar
+1. Click the PortKiller icon in your menu bar
 2. Select "Edit Configuration..."
 3. Modify the port ranges as needed
-4. Save and restart Macport
+4. Save and restart PortKiller
 
 Example configuration:
 ```json
@@ -99,10 +79,6 @@ Example configuration:
     "brew_enabled": true,
     "docker_enabled": true
   },
-  "ui": {
-    "inactive_color": [255, 255, 255],
-    "active_color": [255, 69, 58]
-  },
   "notifications": {
     "enabled": true
   },
@@ -112,38 +88,18 @@ Example configuration:
 }
 ```
 
-### Color Customization
-
-The `ui.inactive_color` and `ui.active_color` fields accept RGB values (0-255 for each channel):
-- `ui.inactive_color`: Icon color when no ports are active (default: white)
-- `ui.active_color`: Icon color when ports are being monitored (default: red)
-
-Popular color options:
-- **Red**: `[255, 69, 58]` (default active)
-- **Orange**: `[255, 149, 0]`
-- **Yellow**: `[255, 204, 0]`
-- **Green**: `[52, 199, 89]`
-- **Blue**: `[0, 122, 255]`
-- **Purple**: `[191, 90, 242]`
-- **White**: `[255, 255, 255]` (default inactive)
-
 ## Usage
 
 1. Launch the application - it will appear in your macOS menu bar
-2. The icon shows in your configured inactive color (default: white) when no ports are active
-3. The icon changes to your configured active color (default: red) when processes are detected on monitored ports
-4. Click the menu bar icon to see all active listeners
-5. Select a process to terminate it, or use "Kill all" to terminate all at once
+2. The icon automatically adapts to your menu bar appearance (light/dark mode)
+3. Click the menu bar icon to see all active port listeners
+4. Select a process to terminate it, or use "Kill all" to terminate all at once
 
 ## Uninstall
 
-```bash
-# Remove the binary
-sudo rm /usr/local/bin/macport
-
-# Remove the config file (optional)
-rm ~/.macport.json
-```
+1. Quit PortKiller from the menu bar (click icon → Quit)
+2. Move PortKiller from Applications to Trash
+3. Optionally remove the config file: `rm ~/.portkiller.json`
 
 ## Platform Support
 
@@ -184,7 +140,7 @@ cargo clippy
 
 ### Architecture
 
-Macport uses a multi-threaded event-driven architecture:
+PortKiller uses a multi-threaded event-driven architecture:
 
 - **Main Event Loop** - Manages UI and orchestrates state changes
 - **Monitor Thread** - Polls ports every 2 seconds using `lsof`
@@ -197,7 +153,7 @@ See [CLAUDE.md](CLAUDE.md) for detailed architecture documentation.
 
 Contributions are welcome! Here are some ways you can help:
 
-- Report bugs and request features via [Issues](https://github.com/gupsammy/Macport/issues)
+- Report bugs and request features via [Issues](https://github.com/gupsammy/PortKiller/issues)
 - Submit pull requests for bug fixes or new features
 - Improve documentation
 - Share your experience and spread the word
