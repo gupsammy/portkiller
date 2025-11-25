@@ -25,7 +25,9 @@ use crate::ui::menu::{
     parse_menu_action,
 };
 
-const POLL_INTERVAL: Duration = Duration::from_secs(2);
+const POLL_INTERVAL_ACTIVE: Duration = Duration::from_secs(2);
+const POLL_INTERVAL_IDLE: Duration = Duration::from_secs(5);
+const IDLE_THRESHOLD: Duration = Duration::from_secs(30);
 const INTEGRATION_REFRESH_INTERVAL: Duration = Duration::from_secs(5);
 const MENU_POLL_INTERVAL: Duration = Duration::from_millis(100);
 // menu constants moved under ui::menu
@@ -364,8 +366,9 @@ fn spawn_monitor_thread(
 ) -> thread::JoinHandle<()> {
     thread::spawn(move || {
         let mut previous: Vec<ProcessInfo> = Vec::new();
+        let mut last_change = Instant::now();
         loop {
-            let scan_start = std::time::Instant::now();
+            let scan_start = Instant::now();
             match scan_ports(&config.monitoring.port_ranges) {
                 Ok(mut processes) => {
                     let scan_duration = scan_start.elapsed();
@@ -375,6 +378,7 @@ fn spawn_monitor_thread(
                             "Change detected (scan took {:?}). Polling immediately for rapid changes.",
                             scan_duration
                         );
+                        last_change = Instant::now();
                         previous = processes.clone();
                         if proxy
                             .send_event(UserEvent::ProcessesUpdated(processes))
@@ -384,12 +388,19 @@ fn spawn_monitor_thread(
                         }
                         continue;
                     } else {
+                        // Adaptive polling: use longer interval when idle
+                        let poll_interval = if last_change.elapsed() > IDLE_THRESHOLD {
+                            POLL_INTERVAL_IDLE
+                        } else {
+                            POLL_INTERVAL_ACTIVE
+                        };
                         log::trace!(
-                            "No change (scan took {:?}). Sleeping {}s.",
+                            "No change (scan took {:?}). Sleeping {}s (idle: {}).",
                             scan_duration,
-                            POLL_INTERVAL.as_secs()
+                            poll_interval.as_secs(),
+                            last_change.elapsed() > IDLE_THRESHOLD
                         );
-                        thread::sleep(POLL_INTERVAL);
+                        thread::sleep(poll_interval);
                     }
                 }
                 Err(err) => {
@@ -397,7 +408,7 @@ fn spawn_monitor_thread(
                     if proxy.send_event(UserEvent::MonitorError(message)).is_err() {
                         break;
                     }
-                    thread::sleep(POLL_INTERVAL);
+                    thread::sleep(POLL_INTERVAL_ACTIVE);
                 }
             }
         }
