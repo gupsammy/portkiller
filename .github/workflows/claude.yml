@@ -36,9 +36,15 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
-          # Allow Claude to read CI results on PRs
+          # This is an optional setting that allows Claude to read CI results on PRs
           additional_permissions: |
             actions: read
 
-          # Enable tools for Rust development and GitHub interaction
-          claude_args: '--system-prompt "Follow our coding standards in CLAUDE.md." --model claude-sonnet-4-5 --allowed-tools "mcp__github_inline_comment__create_inline_comment,Bash(gh:*), Bash(git:*), Bash(cargo:*)"'
+          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
+          # prompt: 'Update the pull request description to include a summary of changes.'
+
+          # Optional: Add claude_args to customize behavior and configuration
+          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
+          # or https://docs.claude.com/en/docs/claude-code/cli-reference for available options
+          # claude_args: '--allowed-tools Bash(gh pr:*)'
+
