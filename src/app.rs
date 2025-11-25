@@ -25,9 +25,8 @@ use crate::ui::menu::{
     parse_menu_action,
 };
 
-const POLL_INTERVAL_ACTIVE: Duration = Duration::from_secs(2);
-const POLL_INTERVAL_IDLE: Duration = Duration::from_secs(5);
 const IDLE_THRESHOLD: Duration = Duration::from_secs(30);
+const IDLE_MULTIPLIER: u64 = 2; // Idle poll interval = base * IDLE_MULTIPLIER
 const INTEGRATION_REFRESH_INTERVAL: Duration = Duration::from_secs(5);
 const MENU_POLL_INTERVAL: Duration = Duration::from_millis(100);
 // menu constants moved under ui::menu
@@ -364,6 +363,11 @@ fn spawn_monitor_thread(
     proxy: EventLoopProxy<UserEvent>,
     config: Config,
 ) -> thread::JoinHandle<()> {
+    // Use config's poll interval, with idle being a multiple of it
+    let poll_interval_active = Duration::from_secs(config.monitoring.poll_interval_secs);
+    let poll_interval_idle =
+        Duration::from_secs(config.monitoring.poll_interval_secs * IDLE_MULTIPLIER);
+
     thread::spawn(move || {
         let mut previous: Vec<ProcessInfo> = Vec::new();
         let mut last_change = Instant::now();
@@ -390,9 +394,9 @@ fn spawn_monitor_thread(
                     } else {
                         // Adaptive polling: use longer interval when idle
                         let poll_interval = if last_change.elapsed() > IDLE_THRESHOLD {
-                            POLL_INTERVAL_IDLE
+                            poll_interval_idle
                         } else {
-                            POLL_INTERVAL_ACTIVE
+                            poll_interval_active
                         };
                         log::trace!(
                             "No change (scan took {:?}). Sleeping {}s (idle: {}).",
@@ -408,7 +412,7 @@ fn spawn_monitor_thread(
                     if proxy.send_event(UserEvent::MonitorError(message)).is_err() {
                         break;
                     }
-                    thread::sleep(POLL_INTERVAL_ACTIVE);
+                    thread::sleep(poll_interval_active);
                 }
             }
         }
