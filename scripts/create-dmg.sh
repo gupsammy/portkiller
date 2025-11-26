@@ -5,7 +5,7 @@ set -e
 # This script packages the .app bundle into a DMG for easy distribution
 
 APP_NAME="PortKiller"
-VERSION="0.1.0"
+VERSION="0.1.5"
 BUILD_DIR="target/release"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
 DMG_NAME="${APP_NAME}-${VERSION}.dmg"
