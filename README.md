@@ -1,18 +1,21 @@
-<p align="center">
-  <img src="assets/app-logo-color.png" alt="PortKiller" width="100" height="100">
-  <br><br>
-  <strong style="font-size: 2em;">PortKiller</strong>
-  <br>
-  <em>Stop hunting. Start killing.</em>
-  <br><br>
-  <a href="https://github.com/gupsammy/PortKiller/releases/download/v0.1.5/PortKiller.dmg">
-    <img src="https://img.shields.io/badge/Download-v0.1.5-blue?style=for-the-badge" alt="Download v0.1.5">
-  </a>
-  &nbsp;&nbsp;
-  <img src="https://img.shields.io/badge/macOS%2010.15+-lightgrey" alt="Platform">
-  &nbsp;
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
-</p>
+<table>
+<tr>
+<td width="140" valign="top">
+<img src="assets/app-logo-color.png" alt="PortKiller" width="120">
+</td>
+<td valign="middle">
+<h1>PortKiller</h1>
+<p><em>Stop hunting. Start killing.</em><br>
+That rogue process hogging port 3000? Gone in one click.</p>
+<a href="https://github.com/gupsammy/PortKiller/releases/download/v0.1.5/PortKiller.dmg">
+<img src="https://img.shields.io/badge/⬇_Download_v0.1.5-22c55e?style=for-the-badge&logoColor=white" alt="Download v0.1.5">
+</a>
+&nbsp;
+<img src="https://img.shields.io/badge/macOS_10.15+-555?style=flat-square" alt="Platform">
+<img src="https://img.shields.io/badge/MIT-555?style=flat-square" alt="License">
+</td>
+</tr>
+</table>
 
 Every developer knows the drill: `lsof -i :3000`, squint at the output, find the PID, `kill -9 1234`, repeat. PortKiller lives in your menu bar and does all that for you. One click. Done.
 
