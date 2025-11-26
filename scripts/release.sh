@@ -4,7 +4,8 @@ set -e
 # Complete release build for PortKiller
 # This script orchestrates the entire build process: clean → build → app → dmg
 
-VERSION="0.1.0"
+# Read version from Cargo.toml (single source of truth)
+VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
 APP_NAME="PortKiller"
 
 echo "🚀 ${APP_NAME} Release Build Pipeline"

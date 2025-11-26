@@ -7,7 +7,8 @@ set -e
 APP_NAME="PortKiller"
 BINARY_NAME="portkiller"  # Cargo builds binary with package name (lowercase)
 BUNDLE_ID="com.samarthgupta.portkiller"
-VERSION="0.1.5"
+# Read version from Cargo.toml (single source of truth)
+VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
 BUILD_DIR="target/release"
 APP_DIR="${BUILD_DIR}/${APP_NAME}.app"
 

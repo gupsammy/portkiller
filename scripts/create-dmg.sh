@@ -5,7 +5,8 @@ set -e
 # This script packages the .app bundle into a DMG for easy distribution
 
 APP_NAME="PortKiller"
-VERSION="0.1.5"
+# Read version from Cargo.toml (single source of truth)
+VERSION=$(grep '^version' Cargo.toml | head -1 | sed 's/.*"\(.*\)".*/\1/')
 BUILD_DIR="target/release"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
 DMG_NAME="${APP_NAME}-${VERSION}.dmg"
